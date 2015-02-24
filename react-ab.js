@@ -88,16 +88,21 @@
     , propTypes: {
       name: React.PropTypes.string.isRequired
       , children: React.PropTypes.array.isRequired
-      , onChoice: React.PropTypes.func.isRequired
+      , onChoice: React.PropTypes.func
+      , choice: React.PropTypes.string
     }
 
     , componentWillMount: function () {
       var variant = this.props.get(this.cookieName());
+      if (this.props.choice) variant = this.props.choice;
 
       for (var i = 0; i < this.props.children.length; i += 1) {
         if (variant === this.props.children[i].props.name) {
           this.setState({ index: i });
-          this.props.onChoice(this.props.name, this.props.children[i].props.name, i, true);
+          if (this.props.onChoice) {
+            this.props.onChoice(this.props.name, this.props.children[i].props.name, i, true);
+          }
+
           return ;
         }
       }
@@ -112,7 +117,9 @@
       this.props.set(this.cookieName(), variant);
 
       this.setState({ index: index });
-      this.props.onChoice(this.props.name, variant, index, false);
+      if (this.props.onChoice) {
+        this.props.onChoice(this.props.name, variant, index, false);
+      }
 
       return index;
     }
